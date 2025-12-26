@@ -1,0 +1,77 @@
+// Prisma Schema for Telegram Bot
+// Documentation: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// User model - stores Telegram user information
+model User {
+  id           Int     @id @default(autoincrement())
+  telegramId   BigInt  @unique
+  username     String?
+  firstName    String
+  lastName     String?
+  languageCode String?
+  isBot        Boolean @default(false)
+  isPremium    Boolean @default(false)
+
+  // Timestamps
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  lastSeenAt DateTime @default(now())
+
+  // User preferences
+  settings UserSettings?
+
+  // User interactions
+  commandLogs CommandLog[]
+
+  @@index([telegramId])
+  @@index([username])
+}
+
+// User settings/preferences
+model UserSettings {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Notification preferences
+  notificationsEnabled Boolean @default(true)
+
+  // Locale preferences
+  timezone String @default("UTC")
+
+  // Image generation preferences
+  defaultAspectRatio String @default("1:1") // 1:1, 9:16, 16:9, 4:3, 3:4
+  defaultImageSize   String @default("1K") // 1K, 2K
+  defaultModel       String @default("gemini-3-pro-image-preview") // gemini-2.5-flash-image, gemini-3-pro-image-preview
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Command logging for analytics
+model CommandLog {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  command  String
+  args     String?
+  chatId   BigInt
+  chatType String // private, group, supergroup, channel
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([command])
+  @@index([createdAt])
+}
