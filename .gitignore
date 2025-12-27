@@ -12,7 +12,7 @@ dist/
 # Database
 *.db
 *.db-journal
-prisma/migrations/
+# prisma/migrations/ - Keep migrations in version control
 
 # IDE
 .idea/
