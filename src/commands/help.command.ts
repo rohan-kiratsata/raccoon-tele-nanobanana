@@ -12,7 +12,7 @@ export async function helpCommand(ctx: BotContext): Promise<void> {
 /help - Display this help message
 /stats - View bot usage statistics
 /prompt - Generate an image from a text description
-/image_settings - Configure image generation defaults (aspect ratio, size, model)
+/image\\_settings - Configure image generation defaults (aspect ratio, size, model)
 
 *Examples:*
 \`/prompt\` - Start image generation (then send your description)

@@ -43,7 +43,7 @@ export async function promptCommand(ctx: BotContext): Promise<void> {
       `├ Aspect Ratio: \`${defaults.aspectRatio}\`\n` +
       `├ Image Size: \`${defaults.imageSize}\`\n` +
       `└ Model: \`${modelDisplay}\`\n\n` +
-      `💡 Change settings with /image_settings\n` +
+      `💡 Change settings with /image\\_settings\n` +
       `Type /cancel to cancel.`,
     { parse_mode: "Markdown" }
   );
