@@ -60,7 +60,6 @@ Use the buttons below to change your preferences.
     ],
     [Markup.button.callback("🤖 Model", "img:model")],
     [Markup.button.callback("🔄 Refresh", "img:refresh")],
-    [Markup.button.callback("◀️ Back to Settings", "settings:back")],
   ]);
 
   await ctx.reply(settingsText, {

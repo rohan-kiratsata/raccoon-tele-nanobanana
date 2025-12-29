@@ -38,7 +38,7 @@ export async function promptCommand(ctx: BotContext): Promise<void> {
   await ctx.reply(
     "🎨 *Image Generation*\n\n" +
       "Please send me a description of the image you'd like me to generate.\n\n" +
-      "Example: *\"A futuristic banana with neon lights in a cyberpunk city\"*\n\n" +
+      "Example: A futuristic banana with neon lights in a cyberpunk city\n\n" +
       `*Current Settings:*\n` +
       `├ Aspect Ratio: \`${defaults.aspectRatio}\`\n` +
       `├ Image Size: \`${defaults.imageSize}\`\n` +
@@ -91,7 +91,7 @@ export async function handlePromptInput(ctx: BotContext): Promise<boolean> {
   try {
     // Get user's default image generation settings
     const defaults = await userService.getImageDefaults(user.id);
-    
+
     logger.info("Generating image for user", {
       userId: user.id,
       prompt,
@@ -119,6 +119,27 @@ export async function handlePromptInput(ctx: BotContext): Promise<boolean> {
     // Delete the status message
     await ctx.telegram.deleteMessage(ctx.chat!.id, statusMessage.message_id);
 
+    // Escape markdown special characters in prompt for safety
+    const escapedPrompt = prompt
+      .replace(/_/g, "\\_")
+      .replace(/\*/g, "\\*")
+      .replace(/\[/g, "\\[")
+      .replace(/\]/g, "\\]")
+      .replace(/\(/g, "\\(")
+      .replace(/\)/g, "\\)")
+      .replace(/~/g, "\\~")
+      .replace(/`/g, "\\`")
+      .replace(/>/g, "\\>")
+      .replace(/#/g, "\\#")
+      .replace(/\+/g, "\\+")
+      .replace(/-/g, "\\-")
+      .replace(/=/g, "\\=")
+      .replace(/\|/g, "\\|")
+      .replace(/\{/g, "\\{")
+      .replace(/\}/g, "\\}")
+      .replace(/\./g, "\\.")
+      .replace(/!/g, "\\!");
+
     // Send the generated image
     await ctx.replyWithPhoto(
       {
@@ -126,7 +147,7 @@ export async function handlePromptInput(ctx: BotContext): Promise<boolean> {
         filename: `generated-image.${image.extension}`,
       },
       {
-        caption: `🎨 *Generated Image*\n\n_Prompt:_ ${prompt}`,
+        caption: `🎨 *Generated Image*\n\n_Prompt:_ ${escapedPrompt}`,
         parse_mode: "Markdown",
       }
     );
@@ -179,4 +200,3 @@ export function isWaitingForPrompt(userId: number): boolean {
 }
 
 export default promptCommand;
-
